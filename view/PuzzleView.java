@@ -20,18 +20,20 @@ public class PuzzleView extends JPanel {
 	/** around edges. */
 	int offset = 5;
 	int scale = 100;
+	Color bkg;
 	
 	Puzzle p;
 	
 	public PuzzleView(Puzzle p) {
 		this.p=p;
+		this.bkg=Color.WHITE;
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		
 		super.paintComponent(g);	
-		g.setColor(Color.WHITE);
+		g.setColor(bkg);
 		g.fillRect(0, 0,  405, 505);
 		
 		for(PuzzlePiece i:this.p.getPieces()) {
@@ -39,6 +41,14 @@ public class PuzzleView extends JPanel {
 			g.fillRect((i.getCol()*scale)+offset, (i.getRow()*scale)+offset, (i.getWidth()*scale)-offset, (i.getHeight()*scale)-offset);			
 		}
 		
+	}
+	
+	public void switchTheme() {
+		if(this.bkg==Color.WHITE)
+			bkg=Color.BLACK;
+		else
+			bkg=Color.WHITE;
+		this.repaint();
 	}
 	
 }

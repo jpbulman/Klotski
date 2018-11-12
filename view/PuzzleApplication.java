@@ -122,6 +122,20 @@ public class PuzzleApplication extends JFrame {
 	
 		moveLabel = new JLabel(String.valueOf(moveCount));
 		
+		JButton btnTheme = new JButton("Dark Theme");
+		btnTheme.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.switchTheme();
+				
+				String name = "";
+				if(btnTheme.getText().equals("Dark Theme"))
+					btnTheme.setText("Light Theme");
+				else
+					btnTheme.setText("Dark Theme");
+			}
+	    }); 
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -148,7 +162,10 @@ public class PuzzleApplication extends JFrame {
 							.addComponent(btnV))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(52)
-							.addComponent(button)))
+							.addComponent(button))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(18)
+							.addComponent(btnTheme)))
 					.addContainerGap(16, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -161,7 +178,9 @@ public class PuzzleApplication extends JFrame {
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(lblMoves)
 								.addComponent(moveLabel))
-							.addGap(195)
+							.addGap(55)
+							.addComponent(btnTheme)
+							.addGap(115)
 							.addComponent(button)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
