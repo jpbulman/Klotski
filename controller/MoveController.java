@@ -21,6 +21,24 @@ public class MoveController implements KeyListener {
 			app.moveCountPlusPlus();
 		app.getPuzzleView().repaint();
 	}
+	
+	public void moveRight() {
+		if(puzzle.moveRight())
+			app.moveCountPlusPlus();
+		app.getPuzzleView().repaint();
+	}
+	
+	public void moveUp() {
+		if(puzzle.moveUp())
+			app.moveCountPlusPlus();
+		app.getPuzzleView().repaint();
+	}
+	
+	public void moveDown() {
+		if(puzzle.moveDown())
+			app.moveCountPlusPlus();
+		app.getPuzzleView().repaint();
+	}
 
 	@Override
 	public void keyPressed(KeyEvent ke) {

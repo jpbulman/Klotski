@@ -23,48 +23,105 @@ public class Puzzle {
 		pieces.add(new PuzzlePiece(1,2,4,2));
 		board = new int[5][4];
 		
-		for(PuzzlePiece i:pieces) {
-			for(int k=0;k<i.getWidth();k++) {
-				for(int j=0;j<i.getHeight();j++) {
-					board[i.getRow()+j][i.getCol()+k]=1;
-				}
-			}
+		for(PuzzlePiece p:pieces) {
+			placePieceOnBoard(p);
 		}
-		
 	}
 	
 	public LinkedList<PuzzlePiece> getPieces() {return pieces;}
 	
-	public boolean moveLeft() {
+	private void clearPieceOnBoard(PuzzlePiece p) {
+		for(Coordinate c:p.getCoordinates()) {
+			board[c.getRow()][c.getCol()] = 0;
+		}
+	}
+	
+	private void placePieceOnBoard(PuzzlePiece p) {
+		for(Coordinate c:p.getCoordinates()) {
+			board[c.getRow()][c.getCol()] = 1;
+		}
+	}
+	
+	public boolean moveLeft(){
 		for(PuzzlePiece i:pieces) {
 			if(i.isSelected) {
-				int y = i.getRow();
-				int x = i.getCol();
-				
-				if(x==0) {
-					return false;
-				}
-				else {
-					if(board[y][x-1]!=1) {
-						if(i.getHeight() == 1) {
-							i.moveLeft();
-							return true;
-						}
-						else if(i.height==2 && board[y+1][x-1]!=1) {
-							i.moveLeft();
-							return true;
-						}
-						else {
-							return false;
-						}
-					}
-					else {
+				for(PuzzlePiece a:pieces) {
+					if(a.piecesEqual(i)) {continue;}
+					else if(i.willPiecesOverlapLeft(a) || i.willGoOutOfBoundsLeft()) {
 						return false;
 					}
 				}
+				clearPieceOnBoard(i);
+				i.moveLeft();
+				placePieceOnBoard(i);
+				return true;
 			}
 		}
 		return false;
+	}
+	
+	public boolean moveRight() {
+		for(PuzzlePiece i:pieces) {
+			if(i.isSelected) {
+				for(PuzzlePiece a:pieces) {
+					if(a.piecesEqual(i)) {continue;}
+					else if(i.willPiecesOverlapRight(a) || i.willGoOutOfBoundsRight()) {
+						return false;
+					}
+				}
+				clearPieceOnBoard(i);
+				i.moveRight();
+				placePieceOnBoard(i);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean moveUp() {
+		for(PuzzlePiece i:pieces) {
+			if(i.isSelected) {
+				for(PuzzlePiece a:pieces) {
+					if(a.piecesEqual(i)) {continue;}
+					else if(i.willPiecesOverlapUp(a) || i.willGoOutOfBoundsUp()) {
+						return false;
+					}
+				}
+				clearPieceOnBoard(i);
+				i.moveUp();
+				placePieceOnBoard(i);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean moveDown() {
+		for(PuzzlePiece i:pieces) {
+			if(i.isSelected) {
+				for(PuzzlePiece a:pieces) {
+					if(a.piecesEqual(i)) {continue;}
+					else if(i.willPiecesOverlapDown(a) || i.willGoOutOfBoundsDown()) {
+						return false;
+					}
+				}
+				clearPieceOnBoard(i);
+				i.moveDown();
+				placePieceOnBoard(i);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void printBoard() {
+		for(int i=0;i<5;i++) {
+			for(int j=0;j<4;j++) {
+				System.out.print(board[i][j]);
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 
 }

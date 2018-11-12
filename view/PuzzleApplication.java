@@ -66,6 +66,12 @@ public class PuzzleApplication extends JFrame {
 		JButton btnReset = new JButton("Reset");
 		
 		JButton button = new JButton("^");
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mc.moveUp();
+			}
+	    }); 
 		
 		JButton button_1 = new JButton("<");
 		button_1.addActionListener(new ActionListener() {
@@ -76,8 +82,20 @@ public class PuzzleApplication extends JFrame {
 	    }); 
 		
 		JButton button_2 = new JButton(">");
+		button_2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mc.moveRight();
+			}
+	    }); 
 		
 		JButton btnV = new JButton("V");
+		btnV.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mc.moveDown();
+			}
+	    }); 
 		
 		JLabel lblMoves = new JLabel("Moves:");
 	
