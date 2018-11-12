@@ -1,85 +1,138 @@
 package project.view;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import project.controller.MoveController;
+import project.controller.SelectPieceController;
+import project.model.Puzzle;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.awt.Dimension;
+import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
 
 public class PuzzleApplication extends JFrame {
 
 	private JPanel contentPane;
+	
+	PuzzleView pv;
+	
+	int moveCount;
+	JLabel moveLabel;
+	
+	public PuzzleView getPuzzleView() {return this.pv;}
+
+	public void moveCountPlusPlus() {
+		moveCount++;
+		moveLabel.setText(String.valueOf(moveCount));
+	}
 
 	/**
 	 * Create the frame.
 	 */
 	public PuzzleApplication() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-
-		JMenu mnOptions = new JMenu("Options");
-		menuBar.add(mnOptions);
-
-		JMenuItem mntmResetPuzzle = new JMenuItem("Reset Puzzle");
-		mnOptions.add(mntmResetPuzzle);
+		
+		moveCount = 0;
+		
+		Puzzle mainPuzzle = new Puzzle();
+		
+		setTitle("PuzzleApplication");
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setBounds(100, 100, 600, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-
-		JPanel panel = new JPanel();
 		
-		JButton button_2 = new JButton("▲");
+		PuzzleView panel = new PuzzleView(mainPuzzle);
+		this.pv=panel;
+		panel.setBackground(Color.GRAY);
+		panel.setSize(new Dimension(400, 500));
 		
-		JButton button = new JButton("▼");
+		SelectPieceController spc = new SelectPieceController(mainPuzzle,PuzzleApplication.this);
+		panel.addMouseListener(spc);
 		
-		JButton button_1 = new JButton("◀");
+		MoveController mc = new MoveController(mainPuzzle,PuzzleApplication.this);
 		
-		JButton button_3 = new JButton("▶");
+		JButton btnReset = new JButton("Reset");
+		
+		JButton button = new JButton("^");
+		
+		JButton button_1 = new JButton("<");
+		button_1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mc.moveLeft();
+			}
+	    }); 
+		
+		JButton button_2 = new JButton(">");
+		
+		JButton btnV = new JButton("V");
+		
+		JLabel lblMoves = new JLabel("Moves:");
+	
+		moveLabel = new JLabel(String.valueOf(moveCount));
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 216, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap()
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 429, GroupLayout.PREFERRED_SIZE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(73)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(button_2)
-								.addComponent(button)))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(button_1)
+									.addGap(33)
+									.addComponent(button_2))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblMoves)
+									.addGap(18)
+									.addComponent(moveLabel))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(18)
+									.addComponent(btnReset))))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(32)
-							.addComponent(button_1)
-							.addGap(41)
-							.addComponent(button_3)))
-					.addContainerGap(65, Short.MAX_VALUE))
+							.addGap(51)
+							.addComponent(btnV))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(52)
+							.addComponent(button)))
+					.addContainerGap(16, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+					.addContainerGap()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(panel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblMoves)
+								.addComponent(moveLabel))
+							.addGap(195)
+							.addComponent(button)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(button_2)
+								.addComponent(button_1))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnV)
+							.addPreferredGap(ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
+							.addComponent(btnReset)))
 					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(45)
-					.addComponent(button_2)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(button_1)
-						.addComponent(button_3))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(button)
-					.addContainerGap(109, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
