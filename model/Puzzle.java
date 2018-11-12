@@ -133,6 +133,16 @@ public class Puzzle {
 		return false;
 	}
 	
+	public boolean userGoingToWin() {
+		for(PuzzlePiece i:pieces) {
+			if(i.isSelected && i.pieceIsInWinPos()) {
+				pieces.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void printBoard() {
 		for(int i=0;i<5;i++) {
 			for(int j=0;j<4;j++) {

@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import project.model.Puzzle;
 import project.view.PuzzleApplication;
 
-public class MoveController implements KeyListener {
+public class MoveController{
 	
 	PuzzleApplication app;
 	Puzzle puzzle;
@@ -35,27 +35,13 @@ public class MoveController implements KeyListener {
 	}
 	
 	public void moveDown() {
-		if(puzzle.moveDown())
-			app.moveCountPlusPlus();
+		if(puzzle.userGoingToWin()) {
+			app.win();
+		}
+		else if(puzzle.moveDown()) {
+			app.moveCountPlusPlus();	
+		}
 		app.getPuzzleView().repaint();
-	}
-
-	@Override
-	public void keyPressed(KeyEvent ke) {
-		int code = ke.getKeyCode();
-		System.out.println(code);
-	}
-
-	@Override
-	public void keyReleased(KeyEvent ke) {
-		int code = ke.getKeyCode();
-		System.out.println(code);
-	}
-
-	@Override
-	public void keyTyped(KeyEvent ke) {
-		int code = ke.getKeyCode();
-		System.out.println(code);
 	}
 
 }

@@ -14,10 +14,6 @@ public class Coordinate {
 		return this.row==c.row && this.col == c.col;
 	}
 	
-	public void print() {
-		System.out.println(row+" "+col);
-	}
-	
 	public int getRow() {return row;}
 	
 	public int getCol() {return col;}

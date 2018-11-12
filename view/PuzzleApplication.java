@@ -22,6 +22,7 @@ import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class PuzzleApplication extends JFrame {
 
@@ -42,6 +43,10 @@ public class PuzzleApplication extends JFrame {
 	public void moveCountReset() {
 		moveCount = 0;
 		moveLabel.setText(String.valueOf(moveCount));
+	}
+	
+	public void win() {
+		JOptionPane.showConfirmDialog (PuzzleApplication.this, "Congratulations, You Won!");
 	}
 
 	/**

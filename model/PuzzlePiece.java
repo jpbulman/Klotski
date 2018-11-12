@@ -120,7 +120,7 @@ public class PuzzlePiece {
 		return false;
 	}
 
-	PuzzlePiece(int h,int w,int r,int c,Color color){
+	public PuzzlePiece(int h,int w,int r,int c,Color color){
 		this.height = h;
 		this.width = w;
 		this.col = c;
@@ -136,7 +136,7 @@ public class PuzzlePiece {
 		}
 	}
 	
-	PuzzlePiece(int h,int w,int r,int c){
+	public PuzzlePiece(int h,int w,int r,int c){
 		this.height = h;
 		this.width = w;
 		this.col = c;
@@ -200,5 +200,8 @@ public class PuzzlePiece {
 			c.moveDown();
 		}
 	}
-
+	
+	public boolean pieceIsInWinPos() {
+		return width == 2 && height == 2 && row == 3 && col == 1;
+	}
 }
