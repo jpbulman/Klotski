@@ -21,29 +21,17 @@ public class PuzzleView extends JPanel {
 	int offset = 5;
 	int scale = 100;
 	
-	/** Off-screen image for drawing (and Graphics object). */
-	Image offScreenImage = null;
-	Graphics offScreenGraphics = null;
-	
 	Puzzle p;
 	
 	public PuzzleView(Puzzle p) {
 		this.p=p;
-	}
-	
-	@Override
-	public Dimension getPreferredSize() {
-		int width = 2*400 + 2*offset;
-		int height = 2*500 + 2*offset;
-		
-		return new Dimension(width,height);
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		
 		super.paintComponent(g);	
-		g.setColor(Color.black);
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0,  405, 505);
 		
 		for(PuzzlePiece i:this.p.getPieces()) {

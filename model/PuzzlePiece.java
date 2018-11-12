@@ -141,7 +141,7 @@ public class PuzzlePiece {
 		this.width = w;
 		this.col = c;
 		this.row = r;
-		this.color = Color.yellow;
+		this.color = new Color(0xD2B48C);
 		this.isSelected=false;
 		this.coords = new LinkedList<Coordinate>();
 		
@@ -162,7 +162,7 @@ public class PuzzlePiece {
 		if(this.width == 2 && this.height == 2)
 			this.color = Color.RED;
 		else
-			this.color = Color.yellow;
+			this.color = new Color(0xD2B48C);
 	}
 	
 	public boolean isSelected() {

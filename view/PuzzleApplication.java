@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import project.controller.MoveController;
+import project.controller.ResetConfirmController;
+import project.controller.ResetPuzzleController;
 import project.controller.SelectPieceController;
 import project.model.Puzzle;
 
@@ -34,6 +36,11 @@ public class PuzzleApplication extends JFrame {
 
 	public void moveCountPlusPlus() {
 		moveCount++;
+		moveLabel.setText(String.valueOf(moveCount));
+	}
+	
+	public void moveCountReset() {
+		moveCount = 0;
 		moveLabel.setText(String.valueOf(moveCount));
 	}
 
@@ -62,8 +69,17 @@ public class PuzzleApplication extends JFrame {
 		panel.addMouseListener(spc);
 		
 		MoveController mc = new MoveController(mainPuzzle,PuzzleApplication.this);
+		ResetPuzzleController rpc = new ResetPuzzleController(mainPuzzle,PuzzleApplication.this);
 		
 		JButton btnReset = new JButton("Reset");
+		btnReset.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ResetConfirmController rcc = new ResetConfirmController();
+				if(rcc.confirm(PuzzleApplication.this))
+					rpc.resetPuzzle();
+			}
+	    }); 
 		
 		JButton button = new JButton("^");
 		button.addActionListener(new ActionListener() {
