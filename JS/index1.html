@@ -5,12 +5,20 @@
 </head>
 <body>
 
-<canvas id="myCanvas" onclick="showCoords(event)" width="605" height="755" style="border:1px solid #000000;background-color: #000000;">
-Your browser does not support the HTML5 canvas tag.</canvas>
+<div onkeydown="arrowKeys(event)">
+    <canvas id="myCanvas" onclick="selectAPiece(event)" onkeydown="arrowKeys(event)" width="605" height="755" style="border:1px solid #000000;background-color: #000000;">
+        Your browser does not support the HTML5 canvas tag.</canvas>
+</div>
+
+<!-- Left -->
+<button onclick = "moveLeft()" type="button">&#8592;</button>
+<!-- Right -->
+<button onclick = "moveRight()" type="button">&#8594;</button>
+<!-- Up -->
+<button onclick = "moveLeft()" type="button">&#8593;</button>
+<!-- Down -->
+<button onclick = "moveLeft()" type="button">&#8595;</button>
 
 <script src="index1.js"></script>
-
-<p id="demo"></p>
-
 </body>
 </html>

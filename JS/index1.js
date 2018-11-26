@@ -6,6 +6,21 @@ class PuzzlePiece{
         this.color=color;
         this.ogColor = color;
         this.isSelected=false;
+        this.listOfCoordinates=[];
+
+        var row = this.topLeftCoordinate.getRow();
+        var col = this.topLeftCoordinate.getCol();
+        for(var i=0;i<this.width;i++){
+            for(var j=0;j<this.height;j++){
+                var c = new Coordinate(row+i,col+j);
+                this.listOfCoordinates.push(c);
+            }
+        }
+
+        if(width==2 && height==1){
+            console.log(this.listOfCoordinates);
+        }
+
     }
 
     getWidth(){
@@ -24,6 +39,10 @@ class PuzzlePiece{
         return this.color;
     }
 
+    getListOfCoordinates(){
+        return this.listOfCoordinates;
+    }
+
     selectPiece(){
         this.color="#4d4dff";
         this.isSelected=true;
@@ -36,6 +55,14 @@ class PuzzlePiece{
 
     getIsSelected(){
         return this.isSelected;
+    }
+
+    moveLeft(){
+        return this.topLeftCoordinate.moveLeft();
+    }
+
+    moveRight(){
+        return this.topLeftCoordinate.moveRight();
     }
     
 }
@@ -64,6 +91,52 @@ class Puzzle{
         return this.pieces;
     }
 
+    moveLeft(){
+        for(var i=0;i<this.getPieces().length;i++){
+
+            var currPiece = this.getPieces()[i];
+
+            if(currPiece.getIsSelected()){
+
+                var list = currPiece.getListOfCoordinates();
+                for(var j=0;j<list.length;j++){
+                    var currCoord = list[j];
+                    if(currCoord.goingOutOfBoundsLeft()){
+                        return false;
+                    }
+                }
+
+                if(currPiece.moveLeft()){
+                    return true;
+                }
+            }
+
+        }
+    }
+
+    moveRight(){
+        for(var i=0;i<this.getPieces().length;i++){
+
+            var currPiece = this.getPieces()[i];
+
+            if(currPiece.getIsSelected()){
+
+                var list = currPiece.getListOfCoordinates();
+                for(var j=0;j<list.length;j++){
+                    var currCoord = list[j];
+                    if(currCoord.goingOutOfBoundsRight()){
+                        return false;
+                    }
+                }
+
+                if(currPiece.moveRight()){
+                    return true;
+                }
+            }
+
+        }
+    }
+
 }
 
 class Coordinate{
@@ -80,21 +153,87 @@ class Coordinate{
         return this.c;
     }
 
+    moveLeft(){
+        this.c-=1;
+        return true;
+    }
+
+    moveRight(){
+        if(! this.goingOutOfBoundsRight()){
+            this.c+=1;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    moveUp(){
+        if(! this.goingOutOfBoundsUp()){
+            this.r-=1;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    moveDown(){
+        if(! this.goingOutOfBoundsDown()){
+            this.r+=1;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    goingOutOfBoundsUp(){
+        return this.r==0;
+    }
+
+    goingOutOfBoundsDown(){
+        return this.r==4;
+    }
+
+    goingOutOfBoundsLeft(){
+        return this.c==0;
+    }
+
+    goingOutOfBoundsRight(){
+        return this.c==3;
+    }
+
 }
 
 class PuzzleApplication{
 
     constructor(puzzle){
         this.puzzle=puzzle;
+        this.spc=new SelectPieceController(this,puzzle);
+        this.mpc=new MovePieceController(this,puzzle);
+    }
+
+    selectPiece(event){
+        this.spc.selectPiece(event.clientX,event.clientY);
+    }
+
+    movePieceLeft(){
+        this.mpc.moveLeft();
+    }
+
+    movePieceRight(){
+        this.mpc.moveRight();
     }
 
     paint(){
         var len = this.puzzle.getPieces().length;
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0,0,canvas.width,canvas.height);
 
         for(var x=0;x<len;x++){
             var currPiece = this.puzzle.getPieces()[x];
-            var canvas = document.getElementById("myCanvas");
-            var ctx = canvas.getContext("2d");
 
             ctx.fillStyle=currPiece.getColor();
 
@@ -144,12 +283,53 @@ class SelectPieceController{
 
 }
 
+class MovePieceController{
+    constructor(app,puzzle){
+        this.app=app;
+        this.puzzle=puzzle;
+    }
+
+    moveLeft(){
+        if(this.puzzle.moveLeft()){
+            this.app.paint();
+            return true;
+        }
+    }
+
+    moveRight(){
+        if(this.puzzle.moveRight()){
+            this.app.paint();
+            return true;
+        }
+    }
+
+}
+
 var mainPuzz = new Puzzle();
 
-var main = new PuzzleApplication(mainPuzz);
-main.paint();
+var app = new PuzzleApplication(mainPuzz);
+app.paint();
 
-function showCoords(event) {
-    var c = new SelectPieceController(main,mainPuzz);
-    c.selectPiece(event.clientX,event.clientY);
+function selectAPiece(event) {
+    app.selectPiece(event);
 }
+
+function moveLeft(){
+    app.movePieceLeft();
+}
+
+function moveRight(){
+    app.movePieceRight();
+}
+
+function arrowKeys(event){
+    var key = event.which || event.keyCode; 
+
+    switch(key){
+        case 37: moveLeft();break;
+        case 39: moveRight();break;
+        default: break;
+    }
+}
+
+window.addEventListener('keydown',arrowKeys,false);
