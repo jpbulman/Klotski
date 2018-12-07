@@ -10,15 +10,15 @@ class PuzzlePiece{
 
         var row = this.topLeftCoordinate.getRow();
         var col = this.topLeftCoordinate.getCol();
-        for(var i=0;i<this.width;i++){
-            for(var j=0;j<this.height;j++){
-                var c = new Coordinate(row+i,col+j);
-                this.listOfCoordinates.push(c);
-            }
-        }
 
         if(width==2 && height==1){
-            console.log(this.listOfCoordinates);
+            
+            for(var i=row;i<row+this.height;i++) {
+                for(var j=col;j<col+this.width;j++) {
+                    this.listOfCoordinates.push(new Coordinate(i,j));
+                }
+            }
+
         }
 
     }
@@ -58,11 +58,35 @@ class PuzzlePiece{
     }
 
     moveLeft(){
-        return this.topLeftCoordinate.moveLeft();
+        this.topLeftCoordinate.moveLeft();
+
+        for(var i=0;i<this.listOfCoordinates.length;i++){
+            this.listOfCoordinates[i].moveLeft();
+        }
     }
 
     moveRight(){
-        return this.topLeftCoordinate.moveRight();
+        this.topLeftCoordinate.moveRight();
+
+        for(var i=0;i<this.listOfCoordinates.length;i++){
+            this.listOfCoordinates[i].moveRight();
+        }
+    }
+    
+    moveUp(){
+        this.topLeftCoordinate.moveUp();
+
+        for(var i=0;i<this.listOfCoordinates.length;i++){
+            this.listOfCoordinates[i].moveUp();
+        }
+    }
+
+    moveDown(){
+        this.topLeftCoordinate.moveDown();
+
+        for(var i=0;i<this.listOfCoordinates.length;i++){
+            this.listOfCoordinates[i].moveDown();
+        }
     }
     
 }
@@ -106,9 +130,8 @@ class Puzzle{
                     }
                 }
 
-                if(currPiece.moveLeft()){
-                    return true;
-                }
+                currPiece.moveLeft();
+                return true;
             }
 
         }
@@ -129,9 +152,52 @@ class Puzzle{
                     }
                 }
 
-                if(currPiece.moveRight()){
-                    return true;
+                currPiece.moveRight();
+                return true;
+            }
+
+        }
+    }
+
+    moveDown(){
+        for(var i=0;i<this.getPieces().length;i++){
+
+            var currPiece = this.getPieces()[i];
+
+            if(currPiece.getIsSelected()){
+
+                var list = currPiece.getListOfCoordinates();
+                for(var j=0;j<list.length;j++){
+                    var currCoord = list[j];
+                    if(currCoord.goingOutOfBoundsDown()){
+                        return false;
+                    }
                 }
+
+                currPiece.moveDown();
+                return true;
+            }
+
+        }
+    }
+
+    moveUp(){
+        for(var i=0;i<this.getPieces().length;i++){
+
+            var currPiece = this.getPieces()[i];
+
+            if(currPiece.getIsSelected()){
+
+                var list = currPiece.getListOfCoordinates();
+                for(var j=0;j<list.length;j++){
+                    var currCoord = list[j];
+                    if(currCoord.goingOutOfBoundsUp()){
+                        return false;
+                    }
+                }
+
+                currPiece.moveUp();
+                return true;
             }
 
         }
@@ -155,45 +221,18 @@ class Coordinate{
 
     moveLeft(){
         this.c-=1;
-        return true;
     }
 
     moveRight(){
-        if(! this.goingOutOfBoundsRight()){
-            this.c+=1;
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-    moveUp(){
-        if(! this.goingOutOfBoundsUp()){
-            this.r-=1;
-            return true;
-        }
-        else{
-            return false;
-        }
+        this.c+=1;
     }
 
     moveDown(){
-        if(! this.goingOutOfBoundsDown()){
-            this.r+=1;
-            return true;
-        }
-        else{
-            return false;
-        }
+        this.r+=1;
     }
 
-    goingOutOfBoundsUp(){
-        return this.r==0;
-    }
-
-    goingOutOfBoundsDown(){
-        return this.r==4;
+    moveUp(){
+        this.r-=1;
     }
 
     goingOutOfBoundsLeft(){
@@ -202,6 +241,14 @@ class Coordinate{
 
     goingOutOfBoundsRight(){
         return this.c==3;
+    }
+
+    goingOutOfBoundsUp(){
+        return this.r==0;
+    }
+
+    goingOutOfBoundsDown(){
+        return this.r==4;
     }
 
 }
@@ -224,6 +271,14 @@ class PuzzleApplication{
 
     movePieceRight(){
         this.mpc.moveRight();
+    }
+
+    movePieceDown(){
+        this.mpc.moveDown();
+    }
+
+    movePieceUp(){
+        this.mpc.moveUp();
     }
 
     paint(){
@@ -303,6 +358,20 @@ class MovePieceController{
         }
     }
 
+    moveUp(){
+        if(this.puzzle.moveUp()){
+            this.app.paint();
+            return true;
+        }
+    }
+
+    moveDown(){
+        if(this.puzzle.moveDown()){
+            this.app.paint();
+            return true;
+        }
+    }
+
 }
 
 var mainPuzz = new Puzzle();
@@ -320,6 +389,14 @@ function moveLeft(){
 
 function moveRight(){
     app.movePieceRight();
+}
+
+function moveUp(){
+    this.app.movePieceUp();
+}
+
+function moveDown(){
+    this.app.movePieceDown();
 }
 
 function arrowKeys(event){
