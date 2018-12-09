@@ -121,6 +121,17 @@ class Puzzle{
         return list;
     }
 
+    oneFromWinning(){
+        var list = this.getPieces();
+        for(var i=0;i<list.length;i++){
+            if(list[i].getWidth()==2&&list[i].getHeight()==2&&list[i].getTLCoordinate().getCol()==1&&list[i].getTLCoordinate().getRow()==3){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     moveLeft(){
         for(var i=0;i<this.getPieces().length;i++){
 
@@ -193,6 +204,11 @@ class Puzzle{
             var currPiece = this.getPieces()[i];
 
             if(currPiece.getIsSelected()){
+
+                if(this.oneFromWinning()&&currPiece.getHeight()==2&&currPiece.getWidth()==2){
+                    currPiece.moveDown();
+                    alert("You win!");
+                }
 
                 var list = currPiece.getListOfCoordinates();
                 for(var j=0;j<list.length;j++){
@@ -363,20 +379,24 @@ class PuzzleApplication{
         this.spc.selectPiece(event.clientX,event.clientY);
     }
 
+    selectPieceIndex(i){
+        this.spc.selectPieceIndex(i);
+    }
+
     movePieceLeft(){
-        this.mpc.moveLeft();
+        return this.mpc.moveLeft();
     }
 
     movePieceRight(){
-        this.mpc.moveRight();
+        return this.mpc.moveRight();
     }
 
     movePieceDown(){
-        this.mpc.moveDown();
+        return this.mpc.moveDown();
     }
 
     movePieceUp(){
-        this.mpc.moveUp();
+        return this.mpc.moveUp();
     }
 
     paint(){
@@ -438,6 +458,18 @@ class SelectPieceController{
         this.app.paint();
     }
 
+    selectPieceIndex(index){
+
+        for(var i=0;i<this.puzzle.getPieces().length;i++){
+            if(this.puzzle.getPieces()[i].getIsSelected()){
+                this.puzzle.getPieces()[i].deselect();
+            }
+        }
+
+        this.puzzle.getPieces()[index].selectPiece();
+        this.app.paint();
+    }
+
 }
 
 class MovePieceController{
@@ -486,29 +518,50 @@ function selectAPiece(event) {
 }
 
 function moveLeft(){
-    app.movePieceLeft();
+    return app.movePieceLeft();
 }
 
 function moveRight(){
-    app.movePieceRight();
+    return app.movePieceRight();
 }
 
 function moveUp(){
-    this.app.movePieceUp();
+    return this.app.movePieceUp();
 }
 
 function moveDown(){
-    this.app.movePieceDown();
+    return this.app.movePieceDown();
 }
 
-function arrowKeys(event){
-    var key = event.which || event.keyCode; 
+// function arrowKeys(event){
+//     var key = event.which || event.keyCode; 
 
-    switch(key){
-        case 37: moveLeft();break;
-        case 39: moveRight();break;
-        default: break;
-    }
+//     switch(key){
+//         case 37: moveLeft();break;
+//         case 39: moveRight();break;
+//         default: break;
+//     }
+// }
+
+// window.addEventListener('keydown',arrowKeys,false);
+
+function rando(){
+
+    // while(!mainPuzz.oneFromWinning()){
+
+        var randIndex = Math.floor((Math.random()*mainPuzz.getPieces().length))
+
+        app.selectPieceIndex(randIndex);
+
+        var randMove = Math.floor((Math.random * 4))
+
+        switch(randMove){
+            case 0: moveLeft();break;
+            case 1: moveRight();break;
+            case 2: moveUp();break;
+            case 3: moveDown();break;
+        }
+
+    // }
+
 }
-
-window.addEventListener('keydown',arrowKeys,false);
