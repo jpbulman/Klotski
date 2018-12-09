@@ -11,14 +11,10 @@ class PuzzlePiece{
         var row = this.topLeftCoordinate.getRow();
         var col = this.topLeftCoordinate.getCol();
 
-        if(width==2 && height==1){
-            
-            for(var i=row;i<row+this.height;i++) {
-                for(var j=col;j<col+this.width;j++) {
-                    this.listOfCoordinates.push(new Coordinate(i,j));
-                }
+        for(var i=row;i<row+this.height;i++) {
+            for(var j=col;j<col+this.width;j++) {
+                this.listOfCoordinates.push(new Coordinate(i,j));
             }
-
         }
 
     }
@@ -115,6 +111,16 @@ class Puzzle{
         return this.pieces;
     }
 
+    getPiecesNotSelected(){
+        var list = [];
+        for(var x=0;x<this.pieces.length;x++){
+            if(!this.pieces[x].isSelected){
+                list.push(this.pieces[x]);
+            }
+        }
+        return list;
+    }
+
     moveLeft(){
         for(var i=0;i<this.getPieces().length;i++){
 
@@ -127,6 +133,17 @@ class Puzzle{
                     var currCoord = list[j];
                     if(currCoord.goingOutOfBoundsLeft()){
                         return false;
+                    }
+                }
+
+                for(var k=0;k<this.getPiecesNotSelected().length;k++){
+                    for(var l=0;l<currPiece.getListOfCoordinates().length;l++){
+                        var curr = currPiece.getListOfCoordinates()[l];
+                        var other = this.getPiecesNotSelected()[k];
+
+                        if(curr.willIntersectLeft(other.getListOfCoordinates())){
+                            return false;
+                        }
                     }
                 }
 
@@ -152,6 +169,17 @@ class Puzzle{
                     }
                 }
 
+                for(var k=0;k<this.getPiecesNotSelected().length;k++){
+                    for(var l=0;l<currPiece.getListOfCoordinates().length;l++){
+                        var curr = currPiece.getListOfCoordinates()[l];
+                        var other = this.getPiecesNotSelected()[k];
+
+                        if(curr.willIntersectRight(other.getListOfCoordinates())){
+                            return false;
+                        }
+                    }
+                }
+
                 currPiece.moveRight();
                 return true;
             }
@@ -174,6 +202,17 @@ class Puzzle{
                     }
                 }
 
+                for(var k=0;k<this.getPiecesNotSelected().length;k++){
+                    for(var l=0;l<currPiece.getListOfCoordinates().length;l++){
+                        var curr = currPiece.getListOfCoordinates()[l];
+                        var other = this.getPiecesNotSelected()[k];
+
+                        if(curr.willIntersectDown(other.getListOfCoordinates())){
+                            return false;
+                        }
+                    }
+                }
+
                 currPiece.moveDown();
                 return true;
             }
@@ -193,6 +232,17 @@ class Puzzle{
                     var currCoord = list[j];
                     if(currCoord.goingOutOfBoundsUp()){
                         return false;
+                    }
+                }
+
+                for(var k=0;k<this.getPiecesNotSelected().length;k++){
+                    for(var l=0;l<currPiece.getListOfCoordinates().length;l++){
+                        var curr = currPiece.getListOfCoordinates()[l];
+                        var other = this.getPiecesNotSelected()[k];
+
+                        if(curr.willIntersectUp(other.getListOfCoordinates())){
+                            return false;
+                        }
                     }
                 }
 
@@ -251,6 +301,54 @@ class Coordinate{
         return this.r==4;
     }
 
+    willIntersectLeft(listOfCoordinates){
+        for(var i=0;i<listOfCoordinates.length;i++){
+            var curr = listOfCoordinates[i];
+
+            if(curr.getCol()==this.c-1&&curr.getRow()==this.r){
+                return true;
+            }
+        }
+        
+        return false
+    }
+
+    willIntersectRight(listOfCoordinates){
+        for(var i=0;i<listOfCoordinates.length;i++){
+            var curr = listOfCoordinates[i];
+
+            if(curr.getCol()==this.c+1&&curr.getRow()==this.r){
+                return true;
+            }
+        }
+   
+        return false
+    }
+
+    willIntersectUp(listOfCoordinates){
+        for(var i=0;i<listOfCoordinates.length;i++){
+            var curr = listOfCoordinates[i];
+
+            if(curr.getCol()==this.c&&curr.getRow()==this.r-1){
+                return true;
+            }
+        }
+   
+        return false
+    }
+
+    willIntersectDown(listOfCoordinates){
+        for(var i=0;i<listOfCoordinates.length;i++){
+            var curr = listOfCoordinates[i];
+
+            if(curr.getCol()==this.c&&curr.getRow()==this.r+1){
+                return true;
+            }
+        }
+   
+        return false
+    }
+
 }
 
 class PuzzleApplication{
@@ -282,6 +380,8 @@ class PuzzleApplication{
     }
 
     paint(){
+        var offset = 5;
+
         var len = this.puzzle.getPieces().length;
         var canvas = document.getElementById("myCanvas");
         var ctx = canvas.getContext("2d");
@@ -292,8 +392,8 @@ class PuzzleApplication{
 
             ctx.fillStyle=currPiece.getColor();
 
-            ctx.fillRect((currPiece.getTLCoordinate().getCol()*150)+5,(currPiece.getTLCoordinate().getRow()*150)+5, (
-                currPiece.getWidth()*150)-5, (currPiece.getHeight()*150)-5);
+            ctx.fillRect((currPiece.getTLCoordinate().getCol()*150)+offset,(currPiece.getTLCoordinate().getRow()*150)+offset, (
+                currPiece.getWidth()*150)-offset, (currPiece.getHeight()*150)-offset);
             ctx.stroke();
         }
     }
@@ -309,6 +409,8 @@ class SelectPieceController{
 
     selectPiece(x,y){
 
+        var offset = 5;
+
         for(var i=0;i<this.puzzle.getPieces().length;i++){
 
             var currPiece = this.puzzle.getPieces()[i];
@@ -316,8 +418,8 @@ class SelectPieceController{
             var coord = currPiece.getTLCoordinate();
             var tlcoordX = (coord.getCol()*150)+5;
             var tlcoordY = (coord.getRow()*150)+5;
-            var brcoordX = (tlcoordX + (150*currPiece.getWidth()))-5;
-            var brcoordY = (tlcoordY + (150*currPiece.getHeight()))-5;
+            var brcoordX = (tlcoordX + (150*currPiece.getWidth()))-offset;
+            var brcoordY = (tlcoordY + (150*currPiece.getHeight()))-offset;
 
             if(x < brcoordX && x > tlcoordX && y < brcoordY && y > tlcoordY){
                 if(currPiece.getIsSelected()){
