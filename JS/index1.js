@@ -533,15 +533,21 @@ function moveDown(){
     return this.app.movePieceDown();
 }
 
-// function arrowKeys(event){
-//     var key = event.which || event.keyCode; 
+function arrowKeys(event){
+    var key = event.which || event.keyCode;
 
-//     switch(key){
-//         case 37: moveLeft();break;
-//         case 39: moveRight();break;
-//         default: break;
-//     }
-// }
+    switch(key){
+        case 38: moveUp();break;
+        case 37: moveLeft();break;
+        case 40: moveDown();break;
+        case 39: moveRight();break;
+        case 119: moveUp();break;
+        case 97: moveLeft();break;
+        case 115: moveDown();break;
+        case 100: moveRight();break;
+        default: break;
+    }
+}
 
 // window.addEventListener('keydown',arrowKeys,false);
 
