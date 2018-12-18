@@ -384,13 +384,13 @@ class PuzzleApplication{
     incMC(){
         var mc = document.getElementById("moveCount")
         mc.setAttribute("data-mc",parseInt(mc.getAttribute("data-mc"))+1)
-        mc.innerHTML = "Move Count: "+mc.getAttribute("data-mc")
+        mc.innerHTML = "Move count: "+mc.getAttribute("data-mc")
     }
 
     resetMoveCounter(){
         var mc = document.getElementById("moveCount")
         mc.setAttribute("data-mc",0)
-        mc.innerHTML = "Move Count: "+mc.getAttribute("data-mc")
+        mc.innerHTML = "Move count: "+mc.getAttribute("data-mc")
     }
 
     selectPiece(event){
