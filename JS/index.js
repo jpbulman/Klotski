@@ -103,6 +103,12 @@ class Puzzle{
         ];
     }
 
+    makeNearWin(){
+        this.pieces = [
+            (new PuzzlePiece(2,2,new Coordinate(3,1),"#e83c3c"))
+        ];
+    }
+
     reset(){
         var n = new Puzzle();
         this.pieces = n.getPieces();
@@ -213,6 +219,7 @@ class Puzzle{
                 if(this.oneFromWinning()&&currPiece.getHeight()==2&&currPiece.getWidth()==2){
                     currPiece.moveDown();
                     alert("You win!");
+                    this.reset()
                 }
 
                 var list = currPiece.getListOfCoordinates();
@@ -379,6 +386,10 @@ class PuzzleApplication{
         this.spc=new SelectPieceController(this,puzzle);
         this.mpc=new MovePieceController(this,puzzle);
         this.rpc = new ResetPuzzleController(this,puzzle);
+    }
+
+    makeWinState(){
+        this.puzzle.makeNearWin();
     }
 
     incMC(){
