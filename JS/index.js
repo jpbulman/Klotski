@@ -438,6 +438,10 @@ class PuzzleApplication{
                 currPiece.getWidth()*150)-offset, (currPiece.getHeight()*150)-offset);
             ctx.stroke();
         }
+
+        ctx.fillStyle = "#D3D3D3"
+        ctx.fillRect(155,canvas.height-5,295,5)
+        ctx.stroke()
     }
 
 }
