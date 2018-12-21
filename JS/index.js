@@ -8,6 +8,27 @@ class PuzzlePiece{
         this.isSelected=false;
         this.listOfCoordinates=[];
 
+        if(topLeftCoordinate){
+            var row = this.topLeftCoordinate.getRow();
+            var col = this.topLeftCoordinate.getCol();
+    
+            for(var i=row;i<row+this.height;i++) {
+                for(var j=col;j<col+this.width;j++) {
+                    this.listOfCoordinates.push(new Coordinate(i,j));
+                }
+            }
+        }
+
+    }
+
+    makeCopyOf(piece){
+        this.width = piece.getWidth()
+        this.height = piece.getHeight()
+        this.topLeftCoordinate = new Coordinate(0,0);
+        this.topLeftCoordinate.makeCopyOf(piece.getTLCoordinate())
+        this.color = piece.getColor();
+        this.ogColor = this.color;
+
         var row = this.topLeftCoordinate.getRow();
         var col = this.topLeftCoordinate.getCol();
 
@@ -16,7 +37,6 @@ class PuzzlePiece{
                 this.listOfCoordinates.push(new Coordinate(i,j));
             }
         }
-
     }
 
     getWidth(){
@@ -101,6 +121,16 @@ class Puzzle{
         (new PuzzlePiece(1,1,new Coordinate(3,2),"#DEB887")),
         (new PuzzlePiece(2,1,new Coordinate(4,1),"#DEB887"))
         ];
+    }
+
+    makeCopyOf(p){
+        this.pieces = []
+        var pPieces = p.getPieces()
+        for(var i in pPieces){
+            var newp = new PuzzlePiece(null,null,null,null);
+            newp.makeCopyOf(pPieces[i])
+            this.pieces.push(newp)
+        }
     }
 
     makeNearWin(){
@@ -289,6 +319,11 @@ class Coordinate{
         this.c=c;
     }
 
+    makeCopyOf(coord){
+        this.r = coord.getRow();
+        this.c = coord.getCol()
+    }
+
     getRow(){
         return this.r;
     }
@@ -386,6 +421,9 @@ class PuzzleApplication{
         this.spc=new SelectPieceController(this,puzzle);
         this.mpc=new MovePieceController(this,puzzle);
         this.rpc = new ResetPuzzleController(this,puzzle);
+        
+        //A stack that holds Puzzle objects, a timeline of the game. Pop to undo, push on when a move is requested
+        this.undoMoveController = [];
     }
 
     makeWinState(){
@@ -413,7 +451,22 @@ class PuzzleApplication{
     }
 
     movePieceLeft(){
-        return this.mpc.moveLeft();
+        //Section is for undoing and redoing
+        //Make a new puzzle
+        var x = new Puzzle();
+        //Set it to the current state
+        x.makeCopyOf(this.puzzle)
+        //Add it to the stack of states we currently have
+        this.undoMoveController.push(x);
+
+        if(this.mpc.moveLeft()){
+            return true;
+        }
+        else{
+            //If it is an invalid move, don't store the state
+            this.undoMoveController.pop()
+            return false;
+        }
     }
 
     movePieceRight(){
@@ -430,6 +483,16 @@ class PuzzleApplication{
 
     resetPuzzle(){
         return this.rpc.reset();
+    }
+
+    changePuzzle(p){
+        this.puzzle=p;
+        this.paint();
+    }
+
+    undoMove(){
+        this.puzzle = this.undoMoveController.pop();
+        this.paint()
     }
 
     paint(){
@@ -608,6 +671,10 @@ function moveDown(){
     else{
         return m;
     }
+}
+
+function undo(){
+    app.undoMove()
 }
 
 function resetPuzzle(){
