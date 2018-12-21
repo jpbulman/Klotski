@@ -27,7 +27,7 @@ class PuzzlePiece{
         this.topLeftCoordinate = new Coordinate(0,0);
         this.topLeftCoordinate.makeCopyOf(piece.getTLCoordinate())
         this.color = piece.getColor();
-        this.ogColor = this.color;
+        this.ogColor = (this.width==2&&this.height==2)? '#e83c3c':'#DEB887';
 
         var row = this.topLeftCoordinate.getRow();
         var col = this.topLeftCoordinate.getCol();
@@ -311,6 +311,12 @@ class Puzzle{
         }
     }
 
+    deselectAll(){
+        for(var i in this.pieces){
+            this.pieces[i].deselect()
+        }
+    }
+
 }
 
 class Coordinate{
@@ -430,9 +436,14 @@ class PuzzleApplication{
         this.puzzle.makeNearWin();
     }
 
-    incMC(){
+    /**
+     * Changes the move counter by delta
+     * @param {int} delta - A number to change the move counter by
+     * @returns {void} - Nothing
+     */
+    deltaMC(delta){
         var mc = document.getElementById("moveCount")
-        mc.setAttribute("data-mc",parseInt(mc.getAttribute("data-mc"))+1)
+        mc.setAttribute("data-mc",parseInt(mc.getAttribute("data-mc"))+delta)
         mc.innerHTML = "Move count: "+mc.getAttribute("data-mc")
     }
 
@@ -450,14 +461,18 @@ class PuzzleApplication{
         this.spc.selectPieceIndex(i);
     }
 
-    movePieceLeft(){
+    saveCurrentState(){
         //Section is for undoing and redoing
         //Make a new puzzle
         var x = new Puzzle();
-        //Set it to the current state
+        //Set it to the current state to essentially just make a copy
         x.makeCopyOf(this.puzzle)
         //Add it to the stack of states we currently have
         this.undoMoveController.push(x);
+    }
+
+    movePieceLeft(){
+        this.saveCurrentState()
 
         if(this.mpc.moveLeft()){
             return true;
@@ -470,18 +485,44 @@ class PuzzleApplication{
     }
 
     movePieceRight(){
-        return this.mpc.moveRight();
+        this.saveCurrentState()
+        
+        if(this.mpc.moveRight()){
+            return true
+        }
+        else{
+            this.undoMoveController.pop()
+            return false
+        }
     }
 
     movePieceDown(){
-        return this.mpc.moveDown();
+        this.saveCurrentState()
+        
+        if(this.mpc.moveDown()){
+            return true
+        }
+        else{
+            this.undoMoveController.pop()
+            return false;
+        }
     }
 
     movePieceUp(){
-        return this.mpc.moveUp();
+        this.saveCurrentState()
+        
+        if(this.mpc.moveUp()){
+            return true
+        }
+        else{
+            this.undoMoveController.pop()
+            return false;
+        }
     }
 
     resetPuzzle(){
+        //Reset the previous moves to nothing
+        this.undoMoveController = []
         return this.rpc.reset();
     }
 
@@ -491,8 +532,15 @@ class PuzzleApplication{
     }
 
     undoMove(){
-        this.puzzle = this.undoMoveController.pop();
-        this.paint()
+        if(this.undoMoveController.length!=0){
+            this.puzzle = this.undoMoveController.pop();
+            this.puzzle.deselectAll()
+            this.spc=new SelectPieceController(this,this.puzzle);
+            this.mpc=new MovePieceController(this,this.puzzle);
+            this.rpc = new ResetPuzzleController(this,this.puzzle);
+            this.deltaMC(-1)
+            this.paint()
+        }
     }
 
     paint(){
@@ -632,7 +680,7 @@ function selectAPiece(event) {
 function moveLeft(){
     var m = app.movePieceLeft()
     if(m){
-        app.incMC()
+        app.deltaMC(1)
         return m;
     }
     else{
@@ -643,7 +691,7 @@ function moveLeft(){
 function moveRight(){
     var m = app.movePieceRight()
     if(m){
-        app.incMC()
+        app.deltaMC(1)
         return m;
     }
     else{
@@ -654,7 +702,7 @@ function moveRight(){
 function moveUp(){
     var m = app.movePieceUp()
     if(m){
-        app.incMC()
+        app.deltaMC(1)
         return m;
     }
     else{
@@ -665,7 +713,7 @@ function moveUp(){
 function moveDown(){
     var m = app.movePieceDown()
     if(m){
-        app.incMC()
+        app.deltaMC(1)
         return m;
     }
     else{
