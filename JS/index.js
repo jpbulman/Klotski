@@ -430,6 +430,8 @@ class PuzzleApplication{
         
         //A stack that holds Puzzle objects, a timeline of the game. Pop to undo, push on when a move is requested
         this.undoMoveController = [];
+        //Moves popped off the UMC are pushed onto the RMC
+        this.redoMoveController = [];
     }
 
     makeWinState(){
@@ -469,6 +471,12 @@ class PuzzleApplication{
         x.makeCopyOf(this.puzzle)
         //Add it to the stack of states we currently have
         this.undoMoveController.push(x);
+    }
+
+    saveCurrentRedoState(){
+        var x = new Puzzle();
+        x.makeCopyOf(this.puzzle)
+        this.redoMoveController.push(x);
     }
 
     movePieceLeft(){
@@ -533,12 +541,26 @@ class PuzzleApplication{
 
     undoMove(){
         if(this.undoMoveController.length!=0){
+            this.saveCurrentRedoState()
             this.puzzle = this.undoMoveController.pop();
             this.puzzle.deselectAll()
             this.spc=new SelectPieceController(this,this.puzzle);
             this.mpc=new MovePieceController(this,this.puzzle);
             this.rpc = new ResetPuzzleController(this,this.puzzle);
             this.deltaMC(-1)
+            this.paint()
+        }
+    }
+
+    redoMove(){
+        if(this.redoMoveController.length!=0){
+            this.saveCurrentState()
+            this.puzzle = this.redoMoveController.pop();
+            this.puzzle.deselectAll()
+            this.spc=new SelectPieceController(this,this.puzzle);
+            this.mpc=new MovePieceController(this,this.puzzle);
+            this.rpc = new ResetPuzzleController(this,this.puzzle);
+            this.deltaMC(1)
             this.paint()
         }
     }
@@ -723,6 +745,10 @@ function moveDown(){
 
 function undo(){
     app.undoMove()
+}
+
+function redo(){
+    app.redoMove()
 }
 
 function resetPuzzle(){
