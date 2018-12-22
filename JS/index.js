@@ -173,7 +173,11 @@ class Puzzle{
         return false;
     }
 
-    moveLeft(){
+    canGoLeft(){
+        return this.makeMoveLeft(false);
+    }
+
+    makeMoveLeft(yn){
         for(var i=0;i<this.getPieces().length;i++){
 
             var currPiece = this.getPieces()[i];
@@ -199,14 +203,25 @@ class Puzzle{
                     }
                 }
 
-                currPiece.moveLeft();
+                if(yn){
+                    currPiece.moveLeft();
+                }
+                
                 return true;
             }
 
         }
     }
 
-    moveRight(){
+    moveLeft(){
+        return this.makeMoveLeft(true);
+    }
+
+    canGoRight(){
+        return this.makeMoveRight(false);
+    }
+
+    makeMoveRight(yn){
         for(var i=0;i<this.getPieces().length;i++){
 
             var currPiece = this.getPieces()[i];
@@ -232,14 +247,25 @@ class Puzzle{
                     }
                 }
 
-                currPiece.moveRight();
+                if(yn){
+                    currPiece.moveRight();
+                }
+
                 return true;
             }
 
         }
     }
 
-    moveDown(){
+    moveRight(){
+        return this.makeMoveRight(true);
+    }
+
+    canGoDown(){
+        return this.makeMoveDown(false)
+    }
+
+    makeMoveDown(yn){
         for(var i=0;i<this.getPieces().length;i++){
 
             var currPiece = this.getPieces()[i];
@@ -271,14 +297,25 @@ class Puzzle{
                     }
                 }
 
-                currPiece.moveDown();
+                if(yn){
+                    currPiece.moveDown();
+                }
+
                 return true;
             }
 
         }
     }
 
-    moveUp(){
+    moveDown(){
+        return this.makeMoveDown(true);
+    }
+
+    canGoUp(){
+        return this.makeMoveUp(false);
+    }
+
+    makeMoveUp(yn){
         for(var i=0;i<this.getPieces().length;i++){
 
             var currPiece = this.getPieces()[i];
@@ -304,11 +341,18 @@ class Puzzle{
                     }
                 }
 
-                currPiece.moveUp();
+                if(yn){
+                    currPiece.moveUp();
+                }
+
                 return true;
             }
 
         }
+    }
+
+    moveUp(){
+        return this.makeMoveUp(true);
     }
 
     deselectAll(){
@@ -427,11 +471,16 @@ class PuzzleApplication{
         this.spc=new SelectPieceController(this,puzzle);
         this.mpc=new MovePieceController(this,puzzle);
         this.rpc = new ResetPuzzleController(this,puzzle);
+        this.rspc = new RandomSolvePuzzleController(this,puzzle);
         
         //A stack that holds Puzzle objects, a timeline of the game. Pop to undo, push on when a move is requested
         this.undoMoveController = [];
         //Moves popped off the UMC are pushed onto the RMC
         this.redoMoveController = [];
+    }
+
+    randomSolve(){
+        this.rspc.solve();
     }
 
     makeWinState(){
@@ -690,6 +739,69 @@ class ResetPuzzleController{
     }
 }
 
+class RandomSolvePuzzleController{
+    constructor(app,puzzle){
+        this.app=app;
+        this.puzzle=puzzle;
+    }
+
+    solve(){
+        while(!this.puzzle.oneFromWinning()){
+            var listOfPieces = this.puzzle.getPieces();
+            this.puzzle.deselectAll();
+    
+            var listOfMovablePieces = []
+    
+            for(var i in listOfPieces){
+                listOfPieces[i].selectPiece();
+    
+                if(this.puzzle.canGoDown()||this.puzzle.canGoRight()||this.puzzle.canGoLeft()||this.puzzle.canGoUp()){
+                    listOfMovablePieces.push(listOfPieces[i])
+                }
+    
+                listOfPieces[i].deselect();
+            }
+    
+            var randomIndex = Math.floor((Math.random() * listOfMovablePieces.length) + 0);
+    
+            var chosenPiece = listOfMovablePieces[randomIndex];
+    
+            chosenPiece.selectPiece();
+            
+            var listOfMoves = []
+    
+            if(this.puzzle.canGoDown()){
+                listOfMoves.push(0)
+            }
+            if(this.puzzle.canGoUp()){
+                listOfMoves.push(1)
+            }
+            if(this.puzzle.canGoLeft()){
+                listOfMoves.push(2)
+            }
+            if(this.puzzle.canGoRight()){
+                listOfMoves.push(3)
+            }
+    
+            randomIndex = Math.floor((Math.random() * listOfMoves.length) + 0)
+    
+            var moveToMake = listOfMoves[randomIndex];
+    
+            switch(moveToMake){
+                case 0: this.puzzle.moveDown();this.app.paint();this.app.deltaMC(1);break;
+                case 1: this.puzzle.moveUp();this.app.paint();this.app.deltaMC(1);break;
+                case 2: this.puzzle.moveLeft();this.app.paint();this.app.deltaMC(1);break;
+                case 3: this.puzzle.moveRight();this.app.paint();this.app.deltaMC(1);break;
+                default: console.log("Look back, something is wrong :(");
+            }
+    
+            chosenPiece.deselect()
+            this.app.paint()
+        }
+    }
+
+}
+
 var mainPuzz = new Puzzle();
 
 var app = new PuzzleApplication(mainPuzz);
@@ -754,6 +866,10 @@ function redo(){
 function resetPuzzle(){
     app.resetPuzzle();
     app.resetMoveCounter()
+}
+
+function randomSolver(){
+    app.randomSolve()
 }
 
 function arrowKeys(event){
